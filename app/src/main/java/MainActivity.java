@@ -120,8 +120,7 @@ public class MainActivity extends Activity
         mOutputText.setVerticalScrollBarEnabled(true);
         mOutputText.setMovementMethod(new ScrollingMovementMethod());
         mOutputText.setTextSize(50);
-        mOutputText.setText(
-                "Click the \'" + BUTTON_TEXT +"\' button sync with calendar.");
+        mOutputText.setText("Waiting for first update...");
         activityLayout.addView(mOutputText);
 
         mCallApiButton = new Button(this);
@@ -413,28 +412,50 @@ public class MainActivity extends Activity
 
             List<String> eventStrings = new ArrayList<String>();
             Events events = mService.events().list(CALENDAR_ID)
-                    .setMaxResults(1)
+                    .setMaxResults(10)
                     .setTimeMin(dtNow)
                     .setOrderBy("startTime")
                     .setSingleEvents(true)
                     .execute();
             List<Event> items = events.getItems();
 
-            //TODO... if event isn't today, don't show?
            //If there's no events, just return empty list
-                for (Event event : items) {
-                    DateTime start = event.getStart().getDateTime();
-                    if (start == null) {
-                        // All-day events don't have start times, so just use
-                        // the start date.
-                        start = event.getStart().getDate();
-                    }
+            for (Event event : items)
+            {
+                String eventStartStr;
 
-                    eventStrings.add(
-                    //        String.format("%s (%s)", event.getSummary(), start));
-                    String.format("%s", event.getSummary()));
+                //Try to get start time (only works if NOT all-day event)
+                DateTime start = event.getStart().getDateTime();
+                if (start == null)
+                {
+                    // All-day events don't have start times, so just use
+                    // the start date.
+                    start = event.getStart().getDate();
+                    eventStartStr = start.toString();//toString of this will give YYYY-MM-dd
+                }
+                else
+                {
+                    //For a timed event, need to parse string...
+                    String timestamp = start.toString();
+                    String[] parts = timestamp.split("T");
+                    eventStartStr = parts[0];
 
                 }
+
+                //Not get today's date in same format
+                SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+                String todayStr = fmt.format(Calendar.getInstance().getTime());
+
+                //Check if this event is today...
+                if (eventStartStr.equals(todayStr))
+                {
+                    eventStrings.add(String.format("%s", event.getSummary()));
+                }
+
+
+
+
+            }
 
             return eventStrings;
         }
