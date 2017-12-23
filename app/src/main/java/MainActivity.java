@@ -55,6 +55,7 @@ public class MainActivity extends Activity
     private TextView mOutputText;
     private TextView mDateText;
     private TextView mTimeText;
+    private TextView mHeaderText;
     private Handler handler;
 
     private Button mCallApiButton;
@@ -107,6 +108,12 @@ public class MainActivity extends Activity
         mTimeText.setText("Time here");
         activityLayout.addView(mTimeText);
 
+        mHeaderText = new TextView(this);
+        mHeaderText.setLayoutParams(tlp);
+        mHeaderText.setPadding(16, 16, 16, 16);
+        mHeaderText.setTextSize(40);
+        mHeaderText.setText("Today's events:");
+        activityLayout.addView(mHeaderText);
 
 
         mOutputText = new TextView(this);
@@ -477,7 +484,6 @@ public class MainActivity extends Activity
             if (output == null || output.size() == 0) {
                 mOutputText.setText("No events today!");
             } else {
-                output.add(0, "Today's events:");
                 mOutputText.setText(TextUtils.join("\n", output));
             }
         }
