@@ -63,7 +63,7 @@ public class MainActivity extends Activity
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
 
-    private static final String CALENDAR_ID = "rj9d3pqp63p0fifgo84r7c4o18@group.calendar.google.com";
+    private static final String CALENDAR_ID = "primary";
     private static final String BUTTON_TEXT = "Sync With Calendar";
     private static final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = { CalendarScopes.CALENDAR_READONLY };
@@ -157,8 +157,8 @@ public class MainActivity extends Activity
     private void getResultsFromApi() {
         if (! isGooglePlayServicesAvailable()) {
             acquireGooglePlayServices();
-       // } else if (mCredential.getSelectedAccountName() == null) {
-    //        chooseAccount();
+        } else if (mCredential.getSelectedAccountName() == null) {
+            chooseAccount();
         } else if (! isDeviceOnline()) {
             mOutputText.setText("No network connection available.");
         } else {
