@@ -96,20 +96,15 @@ public class MainActivity extends Activity
         mDateText.setLayoutParams(tlp);
         mDateText.setPadding(16, 16, 16, 16);
         mDateText.setTextSize(50);
-
-        DateFormat df_date = new SimpleDateFormat("EEE, MMM d yyyy");
-        mDateText.setText(df_date.format(Calendar.getInstance().getTime()));
+        mDateText.setText("Date here");
         activityLayout.addView(mDateText);
-
 
 
         mTimeText = new TextView(this);
         mTimeText.setLayoutParams(tlp);
         mTimeText.setPadding(16, 16, 16, 16);
         mTimeText.setTextSize(100);
-
-        DateFormat df_time = new SimpleDateFormat("h:mm a");
-        mTimeText.setText(df_time.format(Calendar.getInstance().getTime()));
+        mTimeText.setText("Time  here");
         activityLayout.addView(mTimeText);
 
 
@@ -155,13 +150,13 @@ public class MainActivity extends Activity
             }
         }, APP_UPDATE_DELAY);
 
-        getResultsFromApi();
+        updateScreen();
     }
 
 
     private void updateScreen(){
 
-        DateFormat df_date = new SimpleDateFormat("EEE, MMM d yyyy");
+        DateFormat df_date = new SimpleDateFormat("EEEE, MMM d yyyy");
         mDateText.setText(df_date.format(Calendar.getInstance().getTime()));
 
         DateFormat df_time = new SimpleDateFormat("h:mm a");
