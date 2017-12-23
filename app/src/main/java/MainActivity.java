@@ -58,7 +58,7 @@ public class MainActivity extends Activity
     private Handler handler;
 
     private Button mCallApiButton;
-    ProgressDialog mProgress;
+    //ProgressDialog mProgress;
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
@@ -104,7 +104,7 @@ public class MainActivity extends Activity
         mTimeText.setLayoutParams(tlp);
         mTimeText.setPadding(16, 16, 16, 16);
         mTimeText.setTextSize(100);
-        mTimeText.setText("Time  here");
+        mTimeText.setText("Time here");
         activityLayout.addView(mTimeText);
 
 
@@ -131,8 +131,8 @@ public class MainActivity extends Activity
         });
         activityLayout.addView(mCallApiButton);
 
-        mProgress = new ProgressDialog(this);
-        mProgress.setMessage("Calling Google Calendar API ...");
+        //mProgress = new ProgressDialog(this);
+        //mProgress.setMessage("Calling Google Calendar API ...");
 
         setContentView(activityLayout);
 
@@ -459,12 +459,12 @@ public class MainActivity extends Activity
         @Override
         protected void onPreExecute() {
             mOutputText.setText("");
-            mProgress.show();
+            //mProgress.show();
         }
 
         @Override
         protected void onPostExecute(List<String> output) {
-            mProgress.hide();
+           // mProgress.hide();
             if (output == null || output.size() == 0) {
                 mOutputText.setText("No events today!");
             } else {
@@ -475,7 +475,7 @@ public class MainActivity extends Activity
 
         @Override
         protected void onCancelled() {
-            mProgress.hide();
+           // mProgress.hide();
             if (mLastError != null) {
                 if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
                     showGooglePlayServicesAvailabilityErrorDialog(
