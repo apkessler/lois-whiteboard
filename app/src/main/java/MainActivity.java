@@ -29,6 +29,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
@@ -54,6 +55,7 @@ public class MainActivity extends Activity
     private TextView mOutputText;
     private TextView mDateText;
     private TextView mTimeText;
+    private Handler handler;
 
     private Button mCallApiButton;
     ProgressDialog mProgress;
@@ -63,8 +65,11 @@ public class MainActivity extends Activity
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
 
+    private static final int APP_UPDATE_DELAY = 30*1000; //milliseconds
+
+
     private static final String CALENDAR_ID = "primary";
-    private static final String BUTTON_TEXT = "Sync With Calendar";
+    private static final String BUTTON_TEXT = "Force Sync";
     private static final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = { CalendarScopes.CALENDAR_READONLY };
 
@@ -109,6 +114,15 @@ public class MainActivity extends Activity
 
 
 
+        mOutputText = new TextView(this);
+        mOutputText.setLayoutParams(tlp);
+        mOutputText.setPadding(16, 16, 16, 16);
+        mOutputText.setVerticalScrollBarEnabled(true);
+        mOutputText.setMovementMethod(new ScrollingMovementMethod());
+        mOutputText.setTextSize(50);
+        mOutputText.setText(
+                "Click the \'" + BUTTON_TEXT +"\' button sync with calendar.");
+        activityLayout.addView(mOutputText);
 
         mCallApiButton = new Button(this);
         mCallApiButton.setText(BUTTON_TEXT);
@@ -117,22 +131,11 @@ public class MainActivity extends Activity
             public void onClick(View v) {
                 mCallApiButton.setEnabled(false);
                 mOutputText.setText("");
-                getResultsFromApi();
+                updateScreen();
                 mCallApiButton.setEnabled(true);
             }
         });
         activityLayout.addView(mCallApiButton);
-
-        mOutputText = new TextView(this);
-        mOutputText.setLayoutParams(tlp);
-        mOutputText.setPadding(16, 16, 16, 16);
-        mOutputText.setVerticalScrollBarEnabled(true);
-        mOutputText.setMovementMethod(new ScrollingMovementMethod());
-        mOutputText.setTextSize(50);
-        mOutputText.setText(
-                "Click the \'" + BUTTON_TEXT +"\' button to test the API.");
-        activityLayout.addView(mOutputText);
-
 
         mProgress = new ProgressDialog(this);
         mProgress.setMessage("Calling Google Calendar API ...");
@@ -143,9 +146,31 @@ public class MainActivity extends Activity
         mCredential = GoogleAccountCredential.usingOAuth2(
                 getApplicationContext(), Arrays.asList(SCOPES))
                 .setBackOff(new ExponentialBackOff());
+
+        handler = new Handler();
+
+        handler.postDelayed(new Runnable(){
+            public void run(){
+                updateScreen();
+                handler.postDelayed(this, APP_UPDATE_DELAY);
+            }
+        }, APP_UPDATE_DELAY);
+
+        getResultsFromApi();
     }
 
 
+    private void updateScreen(){
+
+        DateFormat df_date = new SimpleDateFormat("EEE, MMM d yyyy");
+        mDateText.setText(df_date.format(Calendar.getInstance().getTime()));
+
+        DateFormat df_time = new SimpleDateFormat("h:mm a");
+        mTimeText.setText(df_time.format(Calendar.getInstance().getTime()));
+
+        getResultsFromApi();
+
+    }
 
     /**
      * Attempt to call the API, after verifying that all the preconditions are
