@@ -408,7 +408,7 @@ public class MainActivity extends Activity
             List<String> eventStrings = new ArrayList<String>();
             Events events = mService.events().list(CALENDAR_ID)
                     .setMaxResults(10)
-                    .setTimeMin(dtNow)
+                    .setTimeMin(dtNow) //This gets any events with END TIMES in the future (but start today)
                     .setOrderBy("startTime")
                     .setSingleEvents(true)
                     .execute();
