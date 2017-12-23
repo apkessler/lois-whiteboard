@@ -129,7 +129,8 @@ public class MainActivity extends Activity
                 mCallApiButton.setEnabled(true);
             }
         });
-        activityLayout.addView(mCallApiButton);
+        //Uncomment line below to add "Force Sync" button.
+       // activityLayout.addView(mCallApiButton);
 
         //mProgress = new ProgressDialog(this);
         //mProgress.setMessage("Calling Google Calendar API ...");
@@ -150,6 +151,14 @@ public class MainActivity extends Activity
             }
         }, APP_UPDATE_DELAY);
 
+
+        // Hide both the navigation bar and the status bar.
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+
+        //Finally, update the screen with time/calendar events.
         updateScreen();
     }
 
@@ -468,7 +477,7 @@ public class MainActivity extends Activity
             if (output == null || output.size() == 0) {
                 mOutputText.setText("No events today!");
             } else {
-                output.add(0, "Next event:");
+                output.add(0, "Today's events:");
                 mOutputText.setText(TextUtils.join("\n", output));
             }
         }
