@@ -65,7 +65,7 @@ public class MainActivity extends Activity
     static final int REQUEST_AUTHORIZATION = 1001;
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
-
+    static final int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION  | View.SYSTEM_UI_FLAG_FULLSCREEN;
     private static final int APP_UPDATE_DELAY = 30*1000; //milliseconds
 
 
@@ -159,11 +159,7 @@ public class MainActivity extends Activity
         }, APP_UPDATE_DELAY);
 
 
-        // Hide both the navigation bar and the status bar.
-        View decorView = getWindow().getDecorView();
-        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN;
-        decorView.setSystemUiVisibility(uiOptions);
+
 
         //Finally, update the screen with time/calendar events.
         updateScreen();
@@ -180,6 +176,9 @@ public class MainActivity extends Activity
 
         getResultsFromApi();
 
+        // Hide both the navigation bar and the status bar.
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(uiOptions);
     }
 
     /**
