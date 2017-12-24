@@ -67,12 +67,14 @@ public class MainActivity extends Activity
     static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
     static final int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION  | View.SYSTEM_UI_FLAG_FULLSCREEN;
     private static final int APP_UPDATE_DELAY = 30*1000; //milliseconds
-
-
+    static final int NUM_FAILED_REQUESTS_BEFORE_ERROR = 10; // 10 tries = 5min
+    static final int NUM_FAILED_REQUESTS_BEFORE_BIG_ERROR = 720; //720 tries = 6hrs
     private static final String CALENDAR_ID = "primary";
     private static final String BUTTON_TEXT = "Force Sync";
     private static final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = { CalendarScopes.CALENDAR_READONLY };
+
+    private static int failedConnectionAttemps = 0;
 
     /**
      * Create the main activity.
@@ -131,16 +133,12 @@ public class MainActivity extends Activity
             @Override
             public void onClick(View v) {
                 mCallApiButton.setEnabled(false);
-                mOutputText.setText("");
                 updateScreen();
                 mCallApiButton.setEnabled(true);
             }
         });
         //Uncomment line below to add "Force Sync" button.
-       // activityLayout.addView(mCallApiButton);
-
-        //mProgress = new ProgressDialog(this);
-        //mProgress.setMessage("Calling Google Calendar API ...");
+     //  activityLayout.addView(mCallApiButton);
 
         setContentView(activityLayout);
 
@@ -193,9 +191,23 @@ public class MainActivity extends Activity
             acquireGooglePlayServices();
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
-        } else if (! isDeviceOnline()) {
-            mOutputText.setText("No network connection available.");
+        } else if (! isDeviceOnline())
+        {
+            failedConnectionAttemps++;
+            if (failedConnectionAttemps < NUM_FAILED_REQUESTS_BEFORE_ERROR)
+            {
+                //Don't do anything - leave info up.
+            }
+            else if (failedConnectionAttemps < NUM_FAILED_REQUESTS_BEFORE_BIG_ERROR)
+            {
+                mOutputText.setText("Can't connect to the internet right now - don't worry, it should be fixed soon!");
+            }
+            else
+            {
+                mOutputText.setText("Looks like there's a problem with the internet. Please let Mindy know!");
+            }
         } else {
+            failedConnectionAttemps = 0;
             new MakeRequestTask(mCredential).execute();
         }
     }
@@ -473,7 +485,7 @@ public class MainActivity extends Activity
 
         @Override
         protected void onPreExecute() {
-            mOutputText.setText("");
+            //mOutputText.setText("");  //Enabling this line will have the text "flash" every time it changes
             //mProgress.show();
         }
 
